@@ -71,3 +71,4 @@ gem 'rspec-rails', group: [ :test ]
 gem 'rails-controller-testing', group: [ :test ]
 gem 'rest-client'
 gem "dotenv-rails"
+gem "cloudinary"
