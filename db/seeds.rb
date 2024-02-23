@@ -17,25 +17,24 @@ List.create(id:2, name: "All times favourites")
 List.create(id:3, name: "Girl Power")
 
 
-# require "json"
-# require "rest-client"
+require "json"
+require "rest-client"
 
-# TOP_STORIES_URL = "http://tmdb.lewagon.com/movie/top_rated?api_key=<your_api_key>"
+url = "http://tmdb.lewagon.com/movie/top_rated"
 
-# def TOP_STORIES_URL (id)
-#   "http://tmdb.lewagon.com/movie/#{id}top_rated?api_key=<your_api_key>"
-# end
-
-# movie_ids = JSON.parse(RestClient.get(TOP_STORIES_URL))
-
-# movie_ids.take(10).each do |id|
-#   le_wagon_movie = JSON.parse(RestClient.get(story_url(id)))
-#   movie = Movie.new(
-#     title: le_wagon_movie["original_title"],
-#     overview: le_wagon_movie["overview"],
-#     poster_url: le_wagon_movie["poster_path"]
-#     rating: le_wagon_movie["vote_average"]
-#   )
-#   post.save
-#   puts "[#{movie.title}] #{movie.overview} - #{movie.poster_url} #{movie.rating}"
-# end
+10.times do |i|
+  puts "Importing movies from page #{i + 1}"
+  movies = JSON.parse(URI.open("#{url}?page=#{i + 1}").read)['results']
+  movies.each do |movie|
+    puts "Creating #{movie['title']}"
+    base_poster_url = "https://image.tmdb.org/t/p/original"
+    Movie.create(
+      title: movie['title'],
+      overview: movie['overview'],
+      poster_url: "#{base_poster_url}#{movie['backdrop_path']}",
+      rating: movie['vote_average']
+    )
+  end
+end
+puts "Movies created"
+# puts "[#{movie.title}] #{movie.overview} - #{movie.poster_url} #{movie.rating}"
